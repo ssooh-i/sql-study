@@ -28,16 +28,30 @@ show tables;
 select department_id  from employees  where first_name='Neena';   -- -> 90
 select department_name  from departments  where department_id=90; -- -> Executive
 
-
+select department_name
+from departments
+where department_id = (select department_id  
+						from employees  
+                        where first_name='Neena');
 
 -- ex2) Valli Pataballa의  업무명(job_title)을 알아내시오
 -- [참고] job_id(IT_PROG)
-
+select job_title
+from jobs
+where job_id = (select job_id 
+						from employees  
+                        where last_name='Pataballa' and first_name='Valli');
 
 -- -----------------------------------------------------------------------------------
 -- ex3) Alexander Hunold의 근무지(city)를 알아내시오
 -- [참고] department_id(60) -> location_id(1400) -> city(Southlake)
-
+select city
+from locations
+where location_id = (select location_id
+					from departments
+					where department_id = (select department_id
+											from employees
+											where first_name = 'Alexander' and last_name = 'Hunold'));
 
 
 
@@ -65,10 +79,18 @@ select department_name  from departments  where department_id=90; -- -> Executiv
 --                       (SA_REP)  (80)       
 --       first_name        job_id        department_id
 --       ------------------------------------------------
---       Kimberely	SA_REP	
+--       Kimberely		   SA_REP	
 select * from employees;
-              
 
+
+select first_name, job_id, department_id
+from employees
+where job_id = (select job_id
+				from employees
+				where lower(first_name) ='oliver')
+and ifnull(department_id, 1000) != (select department_id
+					from employees
+					where lower(first_name) = 'oliver');
 
 
 

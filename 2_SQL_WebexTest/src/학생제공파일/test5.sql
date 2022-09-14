@@ -30,11 +30,26 @@ show tables;
 
 -- 방법1) 인라인 뷰(inline View) – TopN질의
 
+set @pageno=1; -- 변수 설정
+select b.rn, b.employee_id, b.first_name, b.salary
+from(select @rownum := @rownum + 1 as rn, a.*
+	 from(select employee_id, first_name, salary
+		  from employees
+		  order by salary desc
+		  ) a, (select @rownum := 0) tmp
+	) b
+where b.rn > (@pageno * 5 - 5) and b.rn <= (@pageno * 5);
 
 
--- 방법2) 인라인 뷰(inline View) – limt 활용 (MySQL)
+-- 방법2) 인라인 뷰(inline View) – limit 활용 (MySQL)
+select employee_id, first_name, salary
+from employees
+order by salary desc limit 11, 5;
 
-
+select a.rn, employee_id, salary
+from ( select @rownum := @rownum+1 as rn, employee_id, first_name, salary
+from employees, (select @rownum := 0) tmp
+order by salary desc) a limit 10, 5;
 
 
 -- ※ 스칼라 서브 쿼리 (Scalar Subquery)
